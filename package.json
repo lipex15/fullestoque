@@ -1,0 +1,88 @@
+{
+  "name": "global-stock",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "main.cjs",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "vite build && esbuild server.ts database.ts --bundle --platform=node --format=cjs --packages=external --external:better-sqlite3 --sourcemap --outdir=dist --out-extension:.js=.cjs",
+    "start": "node dist/server.cjs",
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit",
+    "electron-dev": "concurrently \"tsx server.ts\" \"wait-on http://localhost:3000 && electron main.cjs\"",
+    "electron-pack": "npm run build && electron-builder",
+    "postinstall": "electron-rebuild -f -w better-sqlite3"
+  },
+  "build": {
+    "appId": "com.deathzin.globalstock",
+    "productName": "Global Stock by deathzin",
+    "asar": false,
+    "directories": {
+      "output": "dist-electron",
+      "buildResources": "build"
+    },
+    "icon": "build/icon.png",
+    "publish": {
+      "provider": "github",
+      "owner": "lipex15",
+      "repo": "fullestoque",
+      "releaseType": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "main.cjs",
+      "package.json",
+      "assets/**/*",
+      "node_modules/better-sqlite3/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable",
+        "dir"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Global Stock"
+    }
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/cors": "^2.8.19",
+    "@types/multer": "^2.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "better-sqlite3": "^11.9.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "electron-updater": "^6.8.9",
+    "express": "^4.21.2",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "multer": "^2.2.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^10.0.3",
+    "electron": "^32.0.0",
+    "electron-builder": "^26.15.3",
+    "electron-rebuild": "^3.2.9",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3",
+    "wait-on": "^9.0.10"
+  }
+}

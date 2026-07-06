@@ -1,0 +1,6 @@
+{
+  "name": "deathstuffs brain v1.0",
+  "description": "Hub central de monitoramento e automação de contas - deathstuffs brain v1.0.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

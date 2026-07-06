@@ -1,0 +1,120 @@
+
+> react-example@1.0.4 build
+> vite build && esbuild server.ts database.ts --bundle --platform=node --format=cjs --packages=external --external:better-sqlite3 --sourcemap --outdir=dist --out-extension:.js=.cjs
+
+[36mvite v6.4.3 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 2079 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                 [39m[1m[2m  0.40 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2mdist/[22m[35massets/index-CTHMIE7G.css  [39m[1m[2m 76.96 kB[22m[1m[22m[2m │ gzip:  11.66 kB[22m
+[2mdist/[22m[36massets/index-DeWnf2XA.js   [39m[1m[2m474.63 kB[22m[1m[22m[2m │ gzip: 134.47 kB[22m
+[32m✓ built in 2.93s[39m
+▲ [WARNING] "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
+
+    server.ts:19:82:
+      19 │ ...filename : fileURLToPath((import.meta as any).url || 'file://' ...
+         ╵                              ~~~~~~~~~~~
+
+  You need to set the output format to "esm" for "import.meta" to work correctly.
+
+1 warning
+
+  dist\server.cjs         64.2kb
+  dist\database.cjs        7.9kb
+  dist\server.cjs.map    117.5kb
+  dist\database.cjs.map   12.6kb
+
+Done in 11ms
+  • electron-builder  version=26.15.3 os=10.0.19045
+  • loaded configuration  file=package.json ("build" field)
+  • description is missed in the package.json  appPackageFile=C:\Users\felip\Desktop\AntiGravityProject\deathstuffs-brain-v1.0\package.json
+  • author is missed in the package.json  appPackageFile=C:\Users\felip\Desktop\AntiGravityProject\deathstuffs-brain-v1.0\package.json
+  • @electron/rebuild already used by electron-builder, please consider to remove excess dependency from devDependencies
+
+To ensure your native dependencies are always matched electron version, simply add script `"postinstall": "electron-builder install-app-deps" to your `package.json`
+  • executing @electron/rebuild  electronVersion=32.0.0 arch=x64 buildFromSource=false workspaceRoot=C:\Users\felip\Desktop\AntiGravityProject\deathstuffs-brain-v1.0 projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • preparing       moduleName=better-sqlite3 arch=x64
+  • finished        moduleName=better-sqlite3 arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=32.0.0 appOutDir=dist-electron\win-unpacked
+  • downloaded      label=electron progress=100%
+  • downloaded electron zip extracted successfully  output=C:\Users\felip\Desktop\AntiGravityProject\deathstuffs-brain-v1.0\dist-electron\win-unpacked
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • searching for node modules  pm=npm searchDir=C:\Users\felip\Desktop\AntiGravityProject\deathstuffs-brain-v1.0
+  • duplicate dependency references  dependencies=["debug@4.4.3","fetch-blob@3.2.0","gaxios@7.1.5","ecdsa-sig-formatter@1.0.11","@jridgewell/trace-mapping@0.3.31","@types/node@22.20.0","lightningcss@1.32.0","@babel/parser@7.29.7","@babel/types@7.29.7","@jridgewell/gen-mapping@0.3.13","@jridgewell/trace-mapping@0.3.31","browserslist@4.28.4","@babel/core@7.29.7","@babel/traverse@7.29.7","@babel/types@7.29.7","@babel/traverse@7.29.7","@babel/template@7.29.7","@babel/types@7.29.7","@babel/types@7.29.7","@babel/code-frame@7.29.7","@babel/parser@7.29.7","@babel/types@7.29.7","@babel/code-frame@7.29.7","@babel/generator@7.29.7","@babel/parser@7.29.7","@babel/template@7.29.7","@babel/types@7.29.7","debug@4.4.3","@jridgewell/remapping@2.3.5","@babel/core@7.29.7","@babel/core@7.29.7","@babel/parser@7.29.7","@babel/types@7.29.7","@babel/types@7.29.7","@babel/parser@7.29.7","@babel/types@7.29.7","@babel/types@7.29.7","vite@6.4.3","once@1.4.0","once@1.4.0","pump@3.0.4","string_decoder@1.1.1","end-of-stream@1.4.5","string_decoder@1.1.1","@discordjs/formatters@0.6.2","@discordjs/util@1.2.0","@discordjs/util@1.2.0","@discordjs/rest@2.6.1","@discordjs/util@1.2.0","@types/node@22.20.0","debug@4.4.3","http-errors@2.0.1","on-finished@2.4.1","qs@6.15.3","http-errors@2.0.1","iconv-lite@0.4.24","type-is@1.6.18","on-finished@2.4.1","get-intrinsic@1.3.0","call-bind-apply-helpers@1.0.2","call-bind-apply-helpers@1.0.2","es-object-atoms@1.1.2","call-bound@1.0.4","get-intrinsic@1.3.0","side-channel-map@1.0.1","http-errors@2.0.1","on-finished@2.4.1","send@0.19.2","mime-types@2.1.35","react-dom@19.2.7","react-dom@19.2.7","string-width@4.2.3","string-width@4.2.3","strip-ansi@6.0.1","strip-ansi@6.0.1","strip-ansi@6.0.1","strip-ansi@7.2.0","ansi-styles@4.3.0","string-width@4.2.3","strip-ansi@6.0.1","string-width@5.1.2","strip-ansi@7.2.0","readable-stream@2.3.8","abort-controller@3.0.0","streamx@2.28.0","streamx@2.28.0","bare-path@3.0.1","archiver-utils@5.0.2","abort-controller@3.0.0","abort-controller@3.0.0","abort-controller@3.0.0","jsonfile@6.2.1","debug@4.4.3","@types/node@22.20.0","debug@4.4.3","pump@3.0.4","debug@4.4.3","debug@4.4.3","https-proxy-agent@7.0.6","debug@4.4.3","debug@4.4.3","http-proxy-agent@7.0.2","https-proxy-agent@7.0.6","socks-proxy-agent@8.0.5","debug@4.4.3","bare-fs@4.7.3","bare-path@3.0.1","pump@3.0.4","bare-fs@4.7.3","streamx@2.28.0","string-width@4.2.3","strip-ansi@6.0.1","ansi-styles@4.3.0","string-width@4.2.3","strip-ansi@6.0.1","string-width@4.2.3","js-yaml@4.3.0","@babel/code-frame@7.29.7","@puppeteer/browsers@2.13.0","chromium-bidi@14.0.0","debug@4.4.3","fs-extra@11.3.4"]
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • signing with signtool.exe  path=dist-electron\win-unpacked\deathStuffs.exe
+  • building        target=nsis file=dist-electron\deathStuffs Setup 1.0.4.exe archs=x64 oneClick=false perMachine=false
+  • signing with signtool.exe  path=dist-electron\win-unpacked\resources\elevate.exe
+  • signing with signtool.exe  path=dist-electron\deathStuffs Setup 1.0.4.__uninstaller.exe
+  • signing with signtool.exe  path=dist-electron\deathStuffs Setup 1.0.4.exe
+  • building block map  blockMapFile=dist-electron\deathStuffs Setup 1.0.4.exe.blockmap
+  • building        target=portable file=dist-electron\deathStuffs 1.0.4.exe archs=x64
+  • publishing      publisher=Github (owner: lipex15, project: brain, version: 1.0.4)
+  • publishing      publisher=Github (owner: lipex15, project: brain, version: 1.0.4)
+  • uploading       file=deathStuffs-Setup-1.0.4.exe.blockmap provider=github
+  • uploading       file=deathStuffs-Setup-1.0.4.exe provider=github
+  • creating GitHub release  reason=release doesn't exist tag=v1.0.4 version=1.0.4
+  • signing with signtool.exe  path=dist-electron\deathStuffs 1.0.4.exe
+  • uploading       file=deathStuffs-1.0.4.exe provider=github
+  • creating GitHub release  reason=release doesn't exist tag=v1.0.4 version=1.0.4
+  ⨯ 422 Unprocessable Entity
+"method: post url: https://api.github.com/repos/lipex15/brain/releases\n\n          Data:\n          {\n  \"message\": \"Validation Failed\",\n  \"errors\": [\n    {\n      \"resource\": \"Release\",\n      \"code\": \"custom\",\n      \"message\": \"Published releases must have a valid tag\"\n    }\n  ],\n  \"documentation_url\": \"https://docs.github.com/rest/releases/releases#create-a-release\",\n  \"status\": \"422\"\n}\n          "
+Headers: {
+  "date": "Sun, 05 Jul 2026 10:12:41 GMT",
+  "content-type": "application/json; charset=utf-8",
+  "content-length": "235",
+  "x-github-media-type": "github.v3; format=json",
+  "x-accepted-github-permissions": "contents=write; contents=write,workflows=write",
+  "x-github-api-version-selected": "2022-11-28",
+  "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning",
+  "access-control-allow-origin": "*",
+  "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
+  "x-frame-options": "deny",
+  "x-content-type-options": "nosniff",
+  "x-xss-protection": "0",
+  "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
+  "content-security-policy": "default-src 'none'",
+  "vary": "Accept-Encoding, Accept, X-Requested-With",
+  "server": "github.com",
+  "x-ratelimit-limit": "5000",
+  "x-ratelimit-remaining": "4943",
+  "x-ratelimit-reset": "1783247068",
+  "x-ratelimit-used": "57",
+  "x-ratelimit-resource": "core",
+  "x-github-request-id": "4873:32178E:1D0784E:1EBDA8B:6A4A2E18"
+}  failedTask=build stackTrace=HttpError: 422 Unprocessable Entity
+"method: post url: https://api.github.com/repos/lipex15/brain/releases\n\n          Data:\n          {\n  \"message\": \"Validation Failed\",\n  \"errors\": [\n    {\n      \"resource\": \"Release\",\n      \"code\": \"custom\",\n      \"message\": \"Published releases must have a valid tag\"\n    }\n  ],\n  \"documentation_url\": \"https://docs.github.com/rest/releases/releases#create-a-release\",\n  \"status\": \"422\"\n}\n          "
+Headers: {
+  "date": "Sun, 05 Jul 2026 10:12:41 GMT",
+  "content-type": "application/json; charset=utf-8",
+  "content-length": "235",
+  "x-github-media-type": "github.v3; format=json",
+  "x-accepted-github-permissions": "contents=write; contents=write,workflows=write",
+  "x-github-api-version-selected": "2022-11-28",
+  "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning",
+  "access-control-allow-origin": "*",
+  "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
+  "x-frame-options": "deny",
+  "x-content-type-options": "nosniff",
+  "x-xss-protection": "0",
+  "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
+  "content-security-policy": "default-src 'none'",
+  "vary": "Accept-Encoding, Accept, X-Requested-With",
+  "server": "github.com",
+  "x-ratelimit-limit": "5000",
+  "x-ratelimit-remaining": "4943",
+  "x-ratelimit-reset": "1783247068",
+  "x-ratelimit-used": "57",
+  "x-ratelimit-resource": "core",
+  "x-github-request-id": "4873:32178E:1D0784E:1EBDA8B:6A4A2E18"
+}
+    at createHttpError (C:\Users\felip\Desktop\AntiGravityProject\deathstuffs-brain-v1.0\node_modules\builder-util-runtime\src\httpExecutor.ts:66:10)
+    at IncomingMessage.<anonymous> (C:\Users\felip\Desktop\AntiGravityProject\deathstuffs-brain-v1.0\node_modules\builder-util-runtime\src\httpExecutor.ts:241:13)
+    at IncomingMessage.emit (node:events:520:35)
+    at endReadableNT (node:internal/streams/readable:1701:12)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)
+Uploaded successfully! latest.yml
