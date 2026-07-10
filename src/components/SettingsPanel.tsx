@@ -229,6 +229,24 @@ export default function SettingsPanel({
             </div>
 
             <div className="space-y-3 pt-2">
+              {/* Store Name Customization */}
+              <label className="flex items-start justify-between p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/50 dark:bg-indigo-900/10 cursor-pointer">
+                <div>
+                  <p className="text-xs font-bold text-indigo-900 dark:text-indigo-100">Nome da sua Loja (Marca)</p>
+                  <p className="text-[10px] text-indigo-500/80 dark:text-indigo-300">Personalize o topo do aplicativo. Deixe vazio para usar o padrão.</p>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Ex: Minha Loja Store"
+                  value={settings.general.storeName || ''}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    general: { ...settings.general, storeName: e.target.value }
+                  })}
+                  className="rounded-lg text-sm bg-white dark:bg-slate-950 border border-indigo-200 dark:border-indigo-800 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-48 text-indigo-900 dark:text-indigo-100"
+                />
+              </label>
+
               {/* Windows Startup */}
               <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-900/10">
                 <input
@@ -322,60 +340,6 @@ export default function SettingsPanel({
                   <p className="text-[10px] text-slate-500 mt-0.5">
                     Envie um arquivo do seu computador ou cole um link direto (URL) para usar de fundo. Limpe para usar cor sólida.
                   </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                  <div className="relative">
-                    <input
-                      id="input-bg-file"
-                      type="file"
-                      accept="image/*,video/mp4"
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          try {
-                            const formData = new FormData();
-                            formData.append('bg', file);
-                            const res = await fetch('http://localhost:3000/api/upload-bg', {
-                              method: 'POST',
-                              body: formData
-                            });
-                            const data = await res.json();
-                            if (data.url) {
-                              setSettings({ ...settings, general: { ...settings.general, backgroundImage: data.url } });
-                            }
-                          } catch (err) {
-                            console.error("Falha ao subir imagem", err);
-                          }
-                        }
-                      }}
-                    />
-                    <button type="button" className="pointer-events-none flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-xl text-xs font-bold transition-all hover:bg-indigo-100 dark:hover:bg-indigo-900/50">
-                      <Image className="w-4 h-4" />
-                      Escolher Imagem
-                    </button>
-                  </div>
-
-                  <div className="flex-1 w-full relative">
-                    <input
-                      id="input-background-image"
-                      type="text"
-                      value={settings.general.backgroundImage || ''}
-                      onChange={(e) => setSettings({ ...settings, general: { ...settings.general, backgroundImage: e.target.value } })}
-                      placeholder="Ou cole URL..."
-                      className="w-full text-xs p-2.5 pl-3 pr-8 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-900/40 dark:text-slate-200"
-                    />
-                    {settings.general.backgroundImage && (
-                      <button
-                        type="button"
-                        onClick={() => setSettings({ ...settings, general: { ...settings.general, backgroundImage: '' } })}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
                 </div>
               </div>
 
@@ -565,9 +529,14 @@ export default function SettingsPanel({
                 )}
               </div>
             </div>
+
+            <div className="mt-8 pb-4 text-center">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-300 dark:text-slate-700 select-none">
+                Global Stock by deathzin • v1.2.2
+              </span>
+            </div>
           </div>
-        )
-        }
+        )}
 
         {/* TAB 4: WINDOWS OFFLINE BUILD GUIDE */}
         {

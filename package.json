@@ -1,7 +1,7 @@
 {
   "name": "global-stock",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.2.3",
   "type": "module",
   "main": "main.cjs",
   "scripts": {
@@ -44,8 +44,8 @@
       ]
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Global Stock"

@@ -9,6 +9,7 @@
 import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import { StockProduct } from "./src/types.js";
 
 let db: Database.Database;
@@ -36,6 +37,15 @@ export function initDatabase(storageDir: string): void {
       minWarning INTEGER DEFAULT 2
     );
 
+
+
+    CREATE TABLE IF NOT EXISTS app_license (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      key_payload TEXT NOT NULL,
+      hardware_hash TEXT NOT NULL,
+      activated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS items (
       id TEXT PRIMARY KEY,
       product_id TEXT NOT NULL,
@@ -54,6 +64,38 @@ export function initDatabase(storageDir: string): void {
       respostaSecreta TEXT,
       paisCadastro TEXT,
       FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS subscriptions (
+      id TEXT PRIMARY KEY,
+      platform TEXT NOT NULL,
+      customer_name TEXT NOT NULL,
+      chat_link TEXT,
+      product_name TEXT DEFAULT 'Xbox Game Pass Ultimate 30 dias',
+      purchase_date TEXT NOT NULL,
+      start_date TEXT NOT NULL,
+      duration_days INTEGER DEFAULT 30,
+      expires_at TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      notes TEXT,
+      alert_3d_sent INTEGER DEFAULT 0,
+      alert_1d_sent INTEGER DEFAULT 0,
+      alert_due_sent INTEGER DEFAULT 0,
+      renewal_count INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS subscription_renewals (
+      id TEXT PRIMARY KEY,
+      subscription_id TEXT NOT NULL,
+      previous_start_date TEXT,
+      previous_expires_at TEXT,
+      new_start_date TEXT NOT NULL,
+      new_expires_at TEXT NOT NULL,
+      renewed_at TEXT NOT NULL,
+      note TEXT,
+      FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE
     );
   `);
   // Safe column migrations — silently ignored if column already exists
@@ -258,6 +300,22 @@ export function getStockSummary(): StockProduct[] {
   }
 
   return summary;
+}
+
+export async function exportDatabaseSnapshotBase64(): Promise<string> {
+  if (!db) {
+    throw new Error("Banco de estoque nao inicializado.");
+  }
+
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "global-stock-backup-"));
+  const tempDbPath = path.join(tempDir, "stock.db");
+
+  try {
+    await db.backup(tempDbPath);
+    return fs.readFileSync(tempDbPath).toString("base64");
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
 }
 
 // --- CLEANUP ---

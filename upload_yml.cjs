@@ -6,7 +6,7 @@ async function run() {
     if (!token) throw new Error("GH_TOKEN is missing");
 
     console.log(`Getting Github releases to find v${version}`);
-    const res = await fetch(`https://api.github.com/repos/lipex15/brain/releases`, {
+    const res = await fetch(`https://api.github.com/repos/lipex15/fullestoque/releases`, {
         headers: { 'Authorization': `token ${token}` }
     });
     const releases = await res.json();
@@ -22,7 +22,7 @@ async function run() {
     // 1. Undraft it if it is a draft
     if (release.draft) {
         console.log("Release is a draft. Setting draft to false.");
-        await fetch(`https://api.github.com/repos/lipex15/brain/releases/${releaseId}`, {
+        await fetch(`https://api.github.com/repos/lipex15/fullestoque/releases/${releaseId}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `token ${token}`,
@@ -38,14 +38,14 @@ async function run() {
     const existingAsset = release.assets.find(a => a.name === 'latest.yml');
     if (existingAsset) {
         console.log("Deleting old latest.yml");
-        await fetch(`https://api.github.com/repos/lipex15/brain/releases/assets/${existingAsset.id}`, {
+        await fetch(`https://api.github.com/repos/lipex15/fullestoque/releases/assets/${existingAsset.id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `token ${token}` }
         });
     }
 
     console.log("Uploading fresh latest.yml...");
-    const uploadRes = await fetch(`https://uploads.github.com/repos/lipex15/brain/releases/${releaseId}/assets?name=latest.yml`, {
+    const uploadRes = await fetch(`https://uploads.github.com/repos/lipex15/fullestoque/releases/${releaseId}/assets?name=latest.yml`, {
         method: 'POST',
         headers: {
             'Authorization': `token ${token}`,

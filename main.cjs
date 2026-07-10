@@ -7,10 +7,29 @@ const { app, BrowserWindow, Tray, Menu } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const { autoUpdater } = require('electron-updater');
+const net = require('net');
 
 let mainWindow;
 let tray;
 let serverProcess;
+let dynamicPort = 3000;
+const APP_NAME = 'Global Stock by deathzin';
+const APP_VERSION = require('./package.json').version;
+
+function getAvailablePort(startPort) {
+  return new Promise((resolve) => {
+    const server = net.createServer();
+    server.listen(startPort, () => {
+      server.once('close', () => resolve(startPort));
+      server.close();
+    });
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') resolve(getAvailablePort(startPort + 1));
+      else resolve(startPort);
+    });
+  });
+}
+
 
 // Prevent multiple instances
 const gotTheLock = app.requestSingleInstanceLock();
@@ -33,38 +52,35 @@ function startServer() {
   if (isPackaged) {
     const serverPath = path.join(process.resourcesPath, 'app', 'dist', 'server.cjs');
     serverProcess = spawn(process.execPath, [serverPath], {
-      env: { ...process.env, NODE_ENV: 'production', IS_ELECTRON: 'true', ELECTRON_RUN_AS_NODE: '1' },
+      env: { ...process.env, PORT: dynamicPort.toString(), NODE_ENV: 'production', IS_ELECTRON: 'true', ELECTRON_RUN_AS_NODE: '1' },
       stdio: ['pipe', 'pipe', 'pipe', 'ipc']
     });
 
     serverProcess.stdout.on('data', (data) => {
       console.log(`[Express stdout]: ${data}`);
-      require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[STDOUT] ${data}\n`);
     });
 
     serverProcess.stderr.on('data', (data) => {
       console.error(`[Express stderr]: ${data}`);
-      require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[STDERR] ${data}\n`);
     });
 
     serverProcess.on('error', (err) => {
-      require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[SPAWN ERROR] ${err.message}\n`);
+      console.error(`[SPAWN ERROR] ${err.message}`);
     });
 
     serverProcess.on('exit', (code, signal) => {
-      require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[EXIT] code: ${code}, signal: ${signal}\n`);
+      console.log(`[EXIT] code: ${code}, signal: ${signal}`);
     });
   }
 }
 
 function createWindow() {
-  require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[MAIN] createWindow called. execPath: ${process.execPath}\n`);
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
     minWidth: 1000,
     minHeight: 600,
-    title: 'deathstuffs brain v1.0',
+    title: `${APP_NAME} v${APP_VERSION}`,
     icon: path.join(__dirname, 'assets', 'logo.png'),
     webPreferences: {
       nodeIntegration: false,
@@ -79,15 +95,15 @@ function createWindow() {
   mainWindow.webContents.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
   // Load Express address
-  mainWindow.loadURL('http://localhost:3000');
+  mainWindow.loadURL(`http://localhost:${dynamicPort}`);
 
   // Retry loading if connection fails (e.g. server booting up)
   mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
-    if (validatedURL.startsWith('http://localhost:3000')) {
+    if (validatedURL.startsWith(`http://localhost:${dynamicPort}`)) {
       console.log('Aguardando inicialização do servidor local. Tentando novamente em 500ms...');
       setTimeout(() => {
         if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.loadURL('http://localhost:3000');
+          mainWindow.loadURL(`http://localhost:${dynamicPort}`);
         }
       }, 500);
     }
@@ -125,7 +141,7 @@ function createTray() {
     }
   ]);
 
-  tray.setToolTip('deathstuffs brain v1.0 - Monitor de Webhooks');
+  tray.setToolTip(`${APP_NAME} v${APP_VERSION}`);
   tray.setContextMenu(contextMenu);
 
   tray.on('double-click', () => {
@@ -133,7 +149,8 @@ function createTray() {
   });
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  dynamicPort = await getAvailablePort(3000);
   startServer();
   createWindow();
 
@@ -148,12 +165,12 @@ app.whenReady().then(() => {
   if (app.isPackaged) {
     try {
       autoUpdater.logger = {
-        info: (msg) => require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[AUTOUPDATER INFO] ${msg}\n`),
-        warn: (msg) => require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[AUTOUPDATER WARN] ${msg}\n`),
-        error: (msg) => require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[AUTOUPDATER ERROR] ${msg}\n`)
+        info: (msg) => console.log(`[AUTOUPDATER] ${msg}`),
+        warn: (msg) => console.warn(`[AUTOUPDATER] ${msg}`),
+        error: (msg) => console.error(`[AUTOUPDATER] ${msg}`)
       };
 
-      autoUpdater.autoDownload = true;
+      autoUpdater.autoDownload = false;
       autoUpdater.autoInstallOnAppQuit = true;
 
       // Event Listeners for the IPC bridge
@@ -171,7 +188,7 @@ app.whenReady().then(() => {
 
       autoUpdater.on('error', (err) => {
         if (serverProcess) serverProcess.send({ type: 'updater_state', data: { status: 'error', progress: 0, error: err.message } });
-        require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[AUTOUPDATER EMIT ERROR] ${err.message}\n`);
+        console.error(`[AUTOUPDATER EMIT ERROR] ${err.message}`);
       });
 
       autoUpdater.on('download-progress', (progressObj) => {
@@ -186,6 +203,16 @@ app.whenReady().then(() => {
 
       autoUpdater.on('update-downloaded', (info) => {
         if (serverProcess) serverProcess.send({ type: 'updater_state', data: { status: 'ready', progress: 100 } });
+        // The user explicitly requested to update NOW (since they pressed YES).
+        // Safely kill the server to release SQLite File Locks!
+        if (serverProcess) {
+          serverProcess.kill();
+          serverProcess = null;
+        }
+        setTimeout(() => {
+          // Immediately auto-install in silent mode to bypass UI blocks
+          autoUpdater.quitAndInstall(true, true);
+        }, 1000);
       });
 
       // IPC listener to receive commands from React via Express
@@ -194,18 +221,27 @@ app.whenReady().then(() => {
           if (msg && msg.type === 'updater_action') {
             if (msg.action === 'check') {
               autoUpdater.checkForUpdatesAndNotify().catch(e => console.error(e));
+            } else if (msg.action === 'download') {
+              autoUpdater.downloadUpdate().catch(e => console.error(e));
             } else if (msg.action === 'install') {
-              autoUpdater.quitAndInstall(true, true);
+              // Fallback just in case.
+              if (serverProcess) {
+                serverProcess.kill();
+                serverProcess = null;
+              }
+              setTimeout(() => {
+                autoUpdater.quitAndInstall(true, true);
+              }, 1000);
             }
           }
         });
       }
 
       autoUpdater.checkForUpdatesAndNotify().catch(err => {
-        require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[AUTOUPDATER FATAL] ${err.message}\n`);
+        console.error(`[AUTOUPDATER FATAL] ${err.message}`);
       });
     } catch (err) {
-      require('fs').appendFileSync('C:\\Users\\felip\\Desktop\\error.log', `[AUTOUPDATER DECLARATION ERROR] ${err.message}\n`);
+      console.error(`[AUTOUPDATER DECLARATION ERROR] ${err.message}`);
     }
   }
 });

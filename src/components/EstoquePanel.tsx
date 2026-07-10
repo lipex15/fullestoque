@@ -170,28 +170,20 @@ export default function EstoquePanel({ forceWarrantyFilter, onClearWarrantyFilte
 
   const handleManualDeliver = async (itemId: string) => {
     const item = productItems.find(i => i.id === itemId);
-    if (!item) return;
-    setManualDeliveryItem(item);
-    setBuyerManualName('');
-  };
+    if (!item || !selectedProduct) return;
 
-  const submitManualDelivery = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualDeliveryItem || !selectedProduct) return;
     try {
-      const finalBuyer = buyerManualName || "Cliente Manual";
-      const res = await fetch(`/api/stock/items/${manualDeliveryItem.id}`, {
+      const res = await fetch(`/api/stock/items/${item.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          content: manualDeliveryItem.content,
+          content: item.content,
           status: 'vendido',
-          sold_to: finalBuyer,
+          sold_to: 'Cliente (Venda Direta)',
           sold_at: new Date().toISOString()
         })
       });
       if (res.ok) {
-        setManualDeliveryItem(null);
         fetchProductItems(selectedProduct.id);
         fetchProducts();
       }
@@ -601,10 +593,13 @@ outro_login:senha123:email@rambler.ru:senhaEmail456"
                                                   <button
                                                     type="button"
                                                     onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
-                                                    className="text-slate-400 hover:text-indigo-600 transition-colors p-0.5"
+                                                    className={`transition-all p-1.5 rounded-md flex items-center justify-center cursor-pointer shadow-sm border ${isExpanded
+                                                        ? 'bg-indigo-100 dark:bg-indigo-900/50 border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400'
+                                                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-indigo-500 hover:border-slate-300 dark:hover:border-slate-600'
+                                                      }`}
                                                     title="Expandir detalhes da conta"
                                                   >
-                                                    <Eye className={`w-3.5 h-3.5 transform transition-transform duration-200 ${isExpanded ? 'scale-110 text-indigo-500' : ''}`} />
+                                                    <Eye className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? 'scale-110 text-indigo-500' : ''}`} />
                                                   </button>
                                                 </td>
 
@@ -672,9 +667,9 @@ outro_login:senha123:email@rambler.ru:senhaEmail456"
                                                       <button
                                                         onClick={() => handleManualDeliver(item.id)}
                                                         className="px-2 py-0.5 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-[10px] font-bold rounded-md cursor-pointer transition-all border border-indigo-150 dark:border-indigo-900/30"
-                                                        title="Marcar como entregue / Vendido"
+                                                        title="Concluir venda instantaneamente"
                                                       >
-                                                        Resgatar / Vender
+                                                        Marcar como Vendido
                                                       </button>
                                                     )}
                                                     <button
@@ -792,22 +787,7 @@ outro_login:senha123:email@rambler.ru:senhaEmail456"
         />
       )}
 
-      {manualDeliveryItem && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div onClick={() => setManualDeliveryItem(null)} className="absolute inset-0 bg-slate-950/40 backdrop-blur-xs cursor-pointer" />
-          <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col z-[101] p-6">
-            <h3 className="text-sm font-black text-slate-900 uppercase">Entrega Manual</h3>
-            <p className="text-xs text-slate-500 mt-2">Deseja marcar este item como vendido e dar baixa no estoque?</p>
-            <form onSubmit={submitManualDelivery} className="mt-4 space-y-3">
-              <input type="text" placeholder="Nome do Comprador" value={buyerManualName} onChange={e => setBuyerManualName(e.target.value)} required className="w-full text-xs p-2 border rounded-xl" />
-              <div className="flex justify-end gap-2 mt-4">
-                <button type="button" onClick={() => setManualDeliveryItem(null)} className="px-4 py-2 text-xs font-bold bg-slate-100 rounded-xl">Cancelar</button>
-                <button type="submit" className="px-4 py-2 text-xs font-bold bg-indigo-600 text-white rounded-xl">Confirmar Baixa</button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+
     </div>
   );
 }
